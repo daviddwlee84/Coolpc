@@ -20,6 +20,11 @@ def wrap(string: str, length: int = 90) -> str:
 if __name__ == "__main__":
     res = requests.get("https://coolpc.com.tw/evaluate.php", headers=headers)
     soup = BeautifulSoup(res.text, "lxml")
+
+    # with open("example.html", "r") as fp:
+    #     # *** UnicodeDecodeError: 'charmap' codec can't decode byte 0x90 in position 525: character maps to <undefined>
+    #     soup2 = BeautifulSoup(fp.read(), "lxml")
+
     time_string = ""
 
     all_items = []
@@ -37,24 +42,34 @@ if __name__ == "__main__":
         select_element = row.select_one("td:nth-child(3) > select")
 
         if select_element:
-            for option in select_element.find_all("option", value=True, disabled=False):
-                # Clean the option text
-                total_result = re.sub(total_regex, subst, option.text, 0, re.MULTILINE)
-                blank_result = re.sub(blank_regex, subst, total_result, 0, re.MULTILINE)
+            for optgroup in select_element.find_all("optgroup"):
+                subclass_name = optgroup.get(
+                    "label"
+                )  # Extract the subclass name from the optgroup label
 
-                if len(blank_result) != 0:
-                    name_string = blank_result.split(",")[0]
-                    price_int = blank_result.split("$").pop().split(" ")[0]
+                for option in optgroup.find_all("option", value=True, disabled=False):
+                    # Clean the option text
+                    total_result = re.sub(
+                        total_regex, subst, option.text, 0, re.MULTILINE
+                    )
+                    blank_result = re.sub(
+                        blank_regex, subst, total_result, 0, re.MULTILINE
+                    )
 
-                    if price_int != "1":
-                        all_items.append(
-                            {
-                                "product": wrap(name_string),
-                                "type": wrap(class_name),
-                                "price": price_int,
-                                "time": time_string,
-                            }
-                        )
+                    if len(blank_result) != 0:
+                        name_string = blank_result.split(",")[0]
+                        price_int = blank_result.split("$").pop().split(" ")[0]
+
+                        if price_int != "1":
+                            all_items.append(
+                                {
+                                    "category": wrap(class_name),
+                                    "type": wrap(subclass_name),
+                                    "product": wrap(name_string),
+                                    "price": price_int,
+                                    "time": time_string,
+                                }
+                            )
     print(df := pd.DataFrame(all_items))
     df.to_csv("result.csv", index=False)
     import ipdb
