@@ -24,6 +24,10 @@ python coolpc_gui.py
 
 ![screenshot](ScreenShot_1.png)
 
+```bash
+python crawler.py
+```
+
 ## Resources
 
 - [原價屋線上估價-含稅](https://coolpc.com.tw/evaluate.php)
