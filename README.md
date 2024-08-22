@@ -1,29 +1,40 @@
-# 庫PC 查價 KUPC
+# Coolpc Crawler + GUI + History Price Database
 
-原價屋爬蟲配合 Sqlite3 資料庫桌面端程式
+What is updated in this fork
 
-## 主題及資料庫路徑
+1. No changes of `%AppData%` (keep this program "portable")
+2. Add missing stuff, e.g. `.gitignore`, `requirements.txt`
+3. Use it as Python program instead of Windows exe
 
-``` bat
-%AppData%\KUPC 
+## Getting Started
+
+```bash
+git clone https://github.com/daviddwlee84/Coolpc.git
+cd Coolpc
+
+git submodule init
+git submodule update
+
+pip install -r requirements.txt
 ```
 
-## 如何使用
-
+```bash
+python coolpc_gui.py
 ```
-解壓縮後
-雙擊CopyThemeFileToAppdata.bat後
-等待bat把ttk第三方主題(Sun-Valley-ttk-theme)移入使用者AppData中
-其餘檔案就可以刪除,可以留下exe主程式就好了
-```
-## 程式執行截圖
 
-![Screenshot](https://github.com/vincent-chang-rightfighter/Kupc/blob/main/ScreenShot_1.png)
+![screenshot](ScreenShot_1.png)
 
+## Resources
 
-## 為什麼開發
+- [原價屋線上估價-含稅](https://coolpc.com.tw/evaluate.php)
+- [原價屋查價-行動版](https://www.coolpc.com.tw/m/)
 
-#### 由於[coolpc-crawler-sqlitedb-with-gspread 專案](https://github.com/vincent-chang-rightfighter/coolpc-crawler-sqlitedb-with-gspread)
-#### (只記錄歷史最低價格與現在價格)維護不意,且使用者體驗極其差勁
-因此開發此相輔程式,有利自行記錄價格趨勢
+Related Projects
 
+- [vincent-chang-rightfighter/Kupc: 原價屋爬蟲配合 Sqlite3 資料庫桌面端程式](https://github.com/vincent-chang-rightfighter/Kupc)
+- [vincent-chang-rightfighter/coolpc-crawler-sqlitedb-with-gspread: coolpc crawler with sqlite and gspread](https://github.com/vincent-chang-rightfighter/coolpc-crawler-sqlitedb-with-gspread)
+- [scsa3/coolpc-parser: 原價屋簡單爬蟲](https://github.com/scsa3/coolpc-parser)
+
+Packages
+
+- [gnikit/tkinter-tooltip: A ToolTip widget for tkinter](https://github.com/gnikit/tkinter-tooltip)
