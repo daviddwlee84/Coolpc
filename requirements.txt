@@ -2,3 +2,6 @@ beautifulsoup4
 tkinter-tooltip
 pandas
 ipdb
+thefuzz[speedup]
+# falied to build in Python 3.11
+# searcharray

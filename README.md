@@ -44,3 +44,5 @@ Packages
 - [gnikit/tkinter-tooltip: A ToolTip widget for tkinter](https://github.com/gnikit/tkinter-tooltip)
 - [jawah/charset_normalizer: Truly universal encoding detector in pure Python](https://github.com/jawah/charset_normalizer)
   - [charset_normalizer 3.3.2 documentation](https://charset-normalizer.readthedocs.io/en/latest/)
+- [seatgeek/thefuzz: Fuzzy String Matching in Python](https://github.com/seatgeek/thefuzz) (use Levenshtein distance i.e. edit distance)
+- [softwaredoug/searcharray: Full text search in your Pandas dataframe](https://github.com/softwaredoug/searcharray)

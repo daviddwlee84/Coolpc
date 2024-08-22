@@ -1,7 +1,9 @@
+from typing import List, Tuple
 from bs4 import BeautifulSoup
 import requests
 import re
 import pandas as pd
+from thefuzz import process
 
 headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36"
@@ -10,6 +12,35 @@ headers = {
 total_regex = r"共有.*\n"
 blank_regex = r"^\s*\n"
 subst = ""
+
+
+# Function to find the closest match in the 'Name' column
+def fuzzy_search(
+    query: str, choices: pd.Series, limit: int = 3
+) -> List[Tuple[str, int, int]]:
+    return process.extract(query, choices, limit=limit)
+
+
+def fuzzy_search_on_column(
+    query: str, df: pd.DataFrame, column: str, limit: int = 3
+) -> pd.DataFrame:
+    return pd.concat(
+        [
+            df.loc[key]
+            for item, score, key in process.extract(query, df[column], limit=limit)
+        ],
+        axis=1,
+    ).T
+    # Include scores (but might be useless..)
+    # items = []
+    # for _, score, key in process.extract(query, df[column], limit=limit):
+    #     # SettingWithCopyWarning: A value is trying to be set on a copy of a slice from a DataFrame
+    #     # See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+    #     item = df.loc[key]
+    #     item["score"] = score
+    #     items.append(item)
+    #
+    # return pd.concat(items, axis=1).T
 
 
 if __name__ == "__main__":
@@ -102,6 +133,11 @@ if __name__ == "__main__":
         content = fp.read()
     with open("result.csv", "w", encoding="utf-8") as fp:
         fp.write(content.replace("宏��", "宏碁"))
+
+    # Apply fuzzy search
+    print(matches := fuzzy_search("4070 super", df["product"], limit=10))
+
+    print(match_df := fuzzy_search_on_column("4060ti", df, "product", limit=10))
 
     import ipdb
 
