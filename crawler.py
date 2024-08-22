@@ -25,6 +25,27 @@ if __name__ == "__main__":
     #     # *** UnicodeDecodeError: 'charmap' codec can't decode byte 0x90 in position 525: character maps to <undefined>
     #     soup2 = BeautifulSoup(fp.read(), "lxml")
 
+    # BUG: got some weird Traditional Chinese character (the website default encoding is Big5)
+    # e.g. 宏�� Acer, Acer宏��
+
+    # # Check for meta charset
+    # meta_tag = soup.find("meta", charset=True)
+    # if meta_tag:
+    #     res.encoding = meta_tag["charset"]
+    # else:
+    #     # Check for meta http-equiv content-type
+    #     meta_tag = soup.find("meta", attrs={"http-equiv": "Content-Type"})
+    #     if meta_tag and "charset=" in meta_tag["content"]:
+    #         res.encoding = meta_tag["content"].split("charset=")[-1].strip()
+    #     else:
+    #         # Fallback to apparent encoding if no meta tag found
+    #         res.encoding = res.apparent_encoding
+    #
+    # # UnicodeDecodeError: 'big5' codec can't decode byte 0xf9 in position 129275: illegal multibyte sequence
+    # soup = BeautifulSoup(
+    #     res.content.decode("Big5", errors="ignore").encode("utf-8"), "lxml"
+    # )
+
     time_string = ""
 
     all_items = []
@@ -71,7 +92,14 @@ if __name__ == "__main__":
                                 }
                             )
     print(df := pd.DataFrame(all_items))
-    df.to_csv("result.csv", index=False)
+    df.to_csv("result.csv", index=False, encoding="utf-8")
+
+    # Adhoc fix
+    with open("result.csv", "r", encoding="utf-8") as fp:
+        content = fp.read()
+    with open("result.csv", "w", encoding="utf-8") as fp:
+        fp.write(content.replace("宏��", "宏碁"))
+
     import ipdb
 
     ipdb.set_trace()
