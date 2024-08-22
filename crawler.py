@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-import textwrap
 import pandas as pd
 
 headers = {
@@ -13,17 +12,13 @@ blank_regex = r"^\s*\n"
 subst = ""
 
 
-def wrap(string: str, length: int = 90) -> str:
-    return "\n".join(textwrap.wrap(string, length))
-
-
 if __name__ == "__main__":
     res = requests.get("https://coolpc.com.tw/evaluate.php", headers=headers)
     soup = BeautifulSoup(res.text, "lxml")
 
-    # with open("example.html", "r") as fp:
-    #     # *** UnicodeDecodeError: 'charmap' codec can't decode byte 0x90 in position 525: character maps to <undefined>
-    #     soup2 = BeautifulSoup(fp.read(), "lxml")
+    # with open("example.html", "r", encoding="utf-8") as fp:
+    #     # BUG (solved by specifying encoding): *** UnicodeDecodeError: 'charmap' codec can't decode byte 0x90 in position 525: character maps to <undefined>
+    #     soup = BeautifulSoup(fp.read(), "lxml")
 
     # BUG: got some weird Traditional Chinese character (the website default encoding is Big5)
     # e.g. 宏�� Acer, Acer宏��
@@ -56,6 +51,7 @@ if __name__ == "__main__":
         time_string = time_element.text[:-2]
 
     # Loop through all rows in the tbody
+    # BUG (solved): "formatted" HTML's new line character will influence parse result..
     for row in soup.select("#tbdy > tr"):
         class_name = row.select_one("td.t").get_text(
             strip=True
@@ -78,23 +74,30 @@ if __name__ == "__main__":
                     )
 
                     if len(blank_result) != 0:
-                        name_string = blank_result.split(",")[0]
-                        price_int = blank_result.split("$").pop().split(" ")[0]
+                        name_string = blank_result.split(",")[0].strip()
+                        price_int = blank_result.split("$").pop().split(" ")[0].strip()
 
                         if price_int != "1":
                             all_items.append(
                                 {
-                                    "category": wrap(class_name),
-                                    "type": wrap(subclass_name),
-                                    "product": wrap(name_string),
-                                    "price": price_int,
+                                    "category": class_name,
+                                    "type": subclass_name,
+                                    "product": re.sub(r"\s+", " ", name_string),
+                                    "price": int(price_int),
                                     "time": time_string,
                                 }
                             )
     print(df := pd.DataFrame(all_items))
     df.to_csv("result.csv", index=False, encoding="utf-8")
 
-    # Adhoc fix
+    # Adhoc fix (TODO: improve this)
+    # df['product'][df['product'].str.contains('宏')]
+    # 32169    宏�猗cer Predator GM7000 2TB/Gen4/7400M/6700M/DR...
+    # 32170    宏�猗cer Predator GM7000 4TB/Gen4/7400M/6700M/DR...
+    # 37542    ACER 宏�� Predator Arc A770 16G(2400MHz/27cm/三年...
+    # 37794    ACER 宏�� Predator Arc A770 16G(2400MHz/27cm/三年...
+    # Name: product, dtype: object
+
     with open("result.csv", "r", encoding="utf-8") as fp:
         content = fp.read()
     with open("result.csv", "w", encoding="utf-8") as fp:

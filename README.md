@@ -42,3 +42,5 @@ Related Projects
 Packages
 
 - [gnikit/tkinter-tooltip: A ToolTip widget for tkinter](https://github.com/gnikit/tkinter-tooltip)
+- [jawah/charset_normalizer: Truly universal encoding detector in pure Python](https://github.com/jawah/charset_normalizer)
+  - [charset_normalizer 3.3.2 documentation](https://charset-normalizer.readthedocs.io/en/latest/)
