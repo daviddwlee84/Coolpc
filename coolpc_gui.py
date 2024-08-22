@@ -172,11 +172,11 @@ def time_crawler_thread():
     t1.start()
 
 
-def wrap(string, lenght=90):
-    return "\n".join(textwrap.wrap(string, lenght))
+def wrap(string: str, length: int = 90) -> str:
+    return "\n".join(textwrap.wrap(string, length))
 
 
-def item_crawler(value, class_string):
+def item_crawler(value: int, class_string: str):
 
     if tree.get_children():
         for i in tree.get_children():
@@ -218,7 +218,7 @@ def item_crawler(value, class_string):
     text.yview_moveto(1)
 
 
-def item_crawler_thread(value, class_string):
+def item_crawler_thread(value: int, class_string: str):
     t2 = threading.Thread(target=item_crawler(value, class_string))
     t2.start()
 
@@ -284,6 +284,7 @@ root = Tk()
 root.tk.call("source", os.path.join(curr_dir, "Sun-Valley-ttk-theme", "sun-valley.tcl"))
 root.tk.call("set_theme", "dark")
 # root.tk.call("set_theme", "light")
+# TODO: should use https://docs.python.org/3/library/tempfile.html
 tmp = open("tmp.ico", "wb+")
 tmp.write(base64.b64decode(img))
 tmp.close()
